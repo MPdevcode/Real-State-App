@@ -1,0 +1,22 @@
+@model DashboardViewModel
+@{ ViewData["Title"] = "Panel general"; }
+<section class="page-intro"><div><p class="eyebrow">Administración / Vista general</p><h1>Todo en perspectiva.</h1><p class="lead-copy">Una mirada al estado actual de las propiedades y las personas de RealEstate.</p></div></section>
+<div class="metrics-grid">
+    <article class="metric metric-featured"><p>Propiedades disponibles</p><strong>@Model.AvailableProperties</strong><span>Espacios publicados</span></article>
+    <article class="metric"><p>Propiedades vendidas</p><strong>@Model.SoldProperties</strong><span>Historias que avanzan</span></article>
+    <article class="metric"><p>Agentes activos</p><strong>@Model.ActiveAgents</strong><span>En la plataforma</span></article>
+    <article class="metric"><p>Agentes inactivos</p><strong>@Model.InactiveAgents</strong><span>Sin acceso</span></article>
+    <article class="metric"><p>Clientes activos</p><strong>@Model.ActiveClients</strong><span>Cuentas habilitadas</span></article>
+    <article class="metric"><p>Clientes inactivos</p><strong>@Model.InactiveClients</strong><span>Cuentas pendientes</span></article>
+    <article class="metric"><p>Desarrolladores activos</p><strong>@Model.ActiveDevelopers</strong><span>Acceso a la API</span></article>
+    <article class="metric"><p>Desarrolladores inactivos</p><strong>@Model.InactiveDevelopers</strong><span>Sin acceso a la API</span></article>
+</div>
+<div class="section-heading"><h2>Gestión de la plataforma</h2><span class="muted">Usuarios y catálogos</span></div>
+<div class="management-grid">
+    <a asp-action="Agents" class="management-link"><h3>Agentes</h3><p>Activar, inactivar y eliminar agentes.</p><span>Gestionar &rarr;</span></a>
+    <a asp-controller="AdminUsers" asp-action="Index" asp-route-role="@Roles.Admin" class="management-link"><h3>Administradores</h3><p>Cuentas y permisos administrativos.</p><span>Gestionar &rarr;</span></a>
+    <a asp-controller="AdminUsers" asp-action="Index" asp-route-role="@Roles.Developer" class="management-link"><h3>Desarrolladores</h3><p>Usuarios autorizados para la API.</p><span>Gestionar &rarr;</span></a>
+    <a asp-controller="Catalogs" asp-action="Index" asp-route-kind="@CatalogKind.PropertyTypes" class="management-link"><h3>Tipos de propiedades</h3><p>Categorías para los espacios publicados.</p><span>Gestionar &rarr;</span></a>
+    <a asp-controller="Catalogs" asp-action="Index" asp-route-kind="@CatalogKind.SaleTypes" class="management-link"><h3>Tipos de ventas</h3><p>Operaciones de venta y alquiler.</p><span>Gestionar &rarr;</span></a>
+    <a asp-controller="Catalogs" asp-action="Index" asp-route-kind="@CatalogKind.Improvements" class="management-link"><h3>Mejoras</h3><p>Características que agregan valor.</p><span>Gestionar &rarr;</span></a>
+</div>

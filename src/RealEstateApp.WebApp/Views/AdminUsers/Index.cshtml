@@ -1,0 +1,17 @@
+@model UserListingViewModel
+@{ var admin = Model.Role == Roles.Admin; ViewData["Title"] = admin ? "Administradores" : "Desarrolladores"; }
+<section class="page-intro"><div><p class="eyebrow">Administración / Personas</p><h1>@ViewData["Title"]</h1><p class="lead-copy">@(admin ? "Administre las cuentas de gestión. No puede editar ni inactivar su propio usuario." : "Administre los usuarios autorizados para consumir la API.")</p></div><a asp-action="Create" asp-route-role="@Model.Role" class="button">Crear @(admin ? "administrador" : "desarrollador")</a></section>
+@if (Model.Users.Count == 0) { <section class="empty-state"><h2>No hay usuarios registrados.</h2><p>Cree la primera cuenta de este mantenimiento.</p></section> }
+else
+{
+    <div class="panel table-scroll"><table><caption>@ViewData["Title"] registrados</caption><thead><tr><th scope="col">Nombre</th><th scope="col">Apellido</th><th scope="col">Usuario</th><th scope="col">Cédula</th><th scope="col">Correo</th><th scope="col">Estado</th><th scope="col">Acciones</th></tr></thead><tbody>
+    @foreach (var user in Model.Users.OrderBy(x => x.FirstName).ThenBy(x => x.LastName))
+    {
+        var self = user.Id == User.FindFirstValue(ClaimTypes.NameIdentifier);
+        <tr><td>@user.FirstName</td><td>@user.LastName</td><td>@user.UserName</td><td>@user.NationalId</td><td>@user.Email</td><td><span class="status-pill @(user.IsActive ? "" : "inactive")">@(user.IsActive ? "Activo" : "Inactivo")</span></td><td>
+        @if (self) { <span class="muted">Su cuenta</span> }
+        else { <div class="inline-actions"><a asp-action="Edit" asp-route-role="@Model.Role" asp-route-id="@user.Id">Editar</a><a asp-action="Status" asp-route-role="@Model.Role" asp-route-id="@user.Id">@(user.IsActive ? "Inactivar" : "Activar")</a></div> }
+        </td></tr>
+    }
+    </tbody></table></div>
+}

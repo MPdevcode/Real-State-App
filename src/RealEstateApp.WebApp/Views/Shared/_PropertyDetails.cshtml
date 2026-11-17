@@ -1,0 +1,32 @@
+@model PropertyViewModel
+<div class="detail-heading"><div><p class="eyebrow">@Model.SaleType / COD. @Model.Code</p><h1>@Model.PropertyType</h1><p class="detail-price">@Presentation.Money(Model.Price)</p></div><span class="status-pill @(Model.Available ? "" : "sold")">@(Model.Available ? "Disponible" : "Vendida")</span></div>
+<section class="gallery" aria-label="Galería de la propiedad">
+@if (Model.Images.Count == 0)
+{
+    <img src="~/images/placeholder.svg" alt="Sin imágenes registradas" class="gallery-main" />
+}
+else
+{
+    var images = Model.Images.OrderBy(x => x.SortOrder).ToList();
+    <img id="gallery-main" src="@Presentation.Image(images[0].FileKey)" alt="@Model.PropertyType código @Model.Code, imagen 1" class="gallery-main" />
+    <div class="gallery-thumbs">
+    @for (var i = 0; i < images.Count; i++)
+    {
+        <a href="@Presentation.Image(images[i].FileKey)" data-gallery="gallery-main" aria-label="Ver imagen @(i + 1)"><img src="@Presentation.Image(images[i].FileKey)" alt="@Model.PropertyType código @Model.Code, imagen @(i + 1)" loading="lazy" /></a>
+    }
+    </div>
+}
+</section>
+<div class="detail-grid">
+    <section class="detail-description"><div class="detail-facts"><div><strong>@Model.Bedrooms</strong><span>Habitaciones</span></div><div><strong>@Model.Bathrooms</strong><span>Baños</span></div><div><strong>@Model.Size.ToString("N2")</strong><span>Metros cuadrados</span></div></div>
+        <h2>Acerca de este espacio</h2><p class="preserve-lines">@Model.Description</p>
+        <h2>Detalles que hacen la diferencia</h2>
+        @if (Model.Improvements.Count == 0) { <p class="muted">Sin mejoras registradas.</p> }
+        <ul class="amenities">@foreach (var item in Model.Improvements) { <li>@item.Name</li> }</ul>
+    </section>
+    <aside class="contact-card"><p class="eyebrow">Su agente inmobiliario</p><img class="avatar" src="@Presentation.Image(Model.AgentPhoto)" alt="Foto de @Model.AgentName" /><h2>@Model.AgentName</h2><p class="muted">Más información sobre esta propiedad.</p>
+        @if (!string.IsNullOrWhiteSpace(Model.AgentPhone)) { <a href="tel:@Model.AgentPhone" class="contact-link">@Model.AgentPhone</a> }
+        @if (!string.IsNullOrWhiteSpace(Model.AgentEmail)) { <a href="mailto:@Model.AgentEmail" class="contact-link">@Model.AgentEmail</a> }
+        <a asp-controller="Home" asp-action="AgentProperties" asp-route-id="@Model.AgentId" class="quiet-link">Ver propiedades del agente</a>
+    </aside>
+</div>

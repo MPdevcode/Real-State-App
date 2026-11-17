@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RealEstateApp.Application/RealEstateApp.Application.csproj" />
+    <Project Path="src/RealEstateApp.Domain/RealEstateApp.Domain.csproj" />
+    <Project Path="src/RealEstateApp.Infrastructure/RealEstateApp.Infrastructure.csproj" />
+    <Project Path="src/RealEstateApp.WebApi/RealEstateApp.WebApi.csproj" />
+    <Project Path="src/RealEstateApp.WebApp/RealEstateApp.WebApp.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RealEstateApp.Tests/RealEstateApp.Tests.csproj" />
+  </Folder>
+</Solution>

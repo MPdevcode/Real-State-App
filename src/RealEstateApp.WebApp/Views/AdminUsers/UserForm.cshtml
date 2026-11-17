@@ -1,0 +1,15 @@
+@model AdminUserInputViewModel
+@{ var editing = Model.Id is not null; ViewData["Title"] = $"{(editing ? "Editar" : "Crear")} {Model.Role.ToLowerInvariant()}"; }
+<section class="page-intro"><div><p class="eyebrow">Administración / @Model.Role</p><h1>@ViewData["Title"]</h1><p class="lead-copy">@(editing ? "Deje ambos campos de contraseña vacíos para mantener la actual." : "La cuenta se creará activa y con el rol de este mantenimiento.")</p></div></section>
+<form asp-action="@(editing ? "Edit" : "Create")" asp-route-role="@Model.Role" asp-route-id="@Model.Id" method="post" class="panel form-panel"><div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+    <div class="form-grid">
+        <div class="field"><label asp-for="FirstName"></label><input asp-for="FirstName" autocomplete="given-name" required /><span asp-validation-for="FirstName"></span></div>
+        <div class="field"><label asp-for="LastName"></label><input asp-for="LastName" autocomplete="family-name" required /><span asp-validation-for="LastName"></span></div>
+        <div class="field"><label asp-for="NationalId"></label><input asp-for="NationalId" required /><span asp-validation-for="NationalId"></span></div>
+        <div class="field"><label asp-for="Email"></label><input asp-for="Email" type="email" autocomplete="email" required /><span asp-validation-for="Email"></span></div>
+        <div class="field"><label asp-for="UserName"></label><input asp-for="UserName" autocomplete="off" required /><span asp-validation-for="UserName"></span></div>
+    </div>
+    <h2>@(editing ? "Cambiar contraseña (opcional)" : "Seguridad de la cuenta")</h2>
+    <div class="form-grid"><div class="field"><label asp-for="Password"></label><input asp-for="Password" autocomplete="new-password" required="@(!editing)" /><span asp-validation-for="Password"></span><small>Mínimo 8 caracteres. Incluya mayúsculas, minúsculas, números y un símbolo.</small></div><div class="field"><label asp-for="ConfirmPassword"></label><input asp-for="ConfirmPassword" autocomplete="new-password" required="@(!editing)" /><span asp-validation-for="ConfirmPassword"></span></div></div>
+    <div class="form-actions"><a asp-action="Index" asp-route-role="@Model.Role" class="button button-secondary">Volver atrás</a><button type="submit" class="button">@(editing ? "Guardar cambios" : $"Crear {Model.Role.ToLowerInvariant()}")</button></div>
+</form>

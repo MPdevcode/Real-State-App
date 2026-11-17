@@ -1,0 +1,9 @@
+@model ConversationViewModel
+<ol class="message-thread" aria-label="Historial de mensajes">
+@foreach (var message in Model.Messages.OrderBy(x => x.CreatedAt))
+{
+    var own = message.SenderId == User.FindFirstValue(ClaimTypes.NameIdentifier);
+    <li class="message @(own ? "message-own" : "")"><div class="message-meta"><strong>@(message.SenderId == Model.AgentId ? "Agente" : "Cliente")@(own ? " (usted)" : "")</strong><time datetime="@message.CreatedAt.ToString("O")">@Presentation.Date(message.CreatedAt)</time></div><p class="preserve-lines">@message.Body</p></li>
+}
+</ol>
+@if (Model.Messages.Count == 0) { <p class="muted">La conversación aún no tiene mensajes.</p> }

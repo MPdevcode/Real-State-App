@@ -1,0 +1,12 @@
+@model LoginInputViewModel
+@{ ViewData["Title"] = "Iniciar sesión"; }
+<div class="auth-layout"><section class="auth-story"><p class="eyebrow">Bienvenido a casa</p><h1>Cada gran cambio empieza con una puerta abierta.</h1><p>Sus favoritas, conversaciones y oportunidades le esperan.</p><div class="architectural-mark" aria-hidden="true"></div></section>
+<section class="panel auth-panel"><p class="eyebrow">Su cuenta</p><h2>Iniciar sesión</h2><p class="muted">Ingrese con su correo o nombre de usuario.</p>
+    @if (Model.ReturnUrl is not null) { <p class="notice">Debe iniciar sesión para acceder a esta funcionalidad.</p> }
+    <form asp-action="Login" method="post"><div asp-validation-summary="All" class="validation-summary" role="alert"></div><input asp-for="ReturnUrl" type="hidden" />
+        <div class="field"><label asp-for="Login"></label><input asp-for="Login" autocomplete="username" required /><span asp-validation-for="Login"></span></div>
+        <div class="field"><label asp-for="Password"></label><input asp-for="Password" autocomplete="current-password" required /><span asp-validation-for="Password"></span></div>
+        <button type="submit" class="button full-width">Iniciar sesión</button>
+    </form>
+    <p class="form-note">¿Aún no tiene una cuenta? <a asp-action="Register">Únase a RealEstate</a>.</p><a class="quiet-link" asp-controller="Home" asp-action="Index">Volver al inicio</a>
+</section></div>

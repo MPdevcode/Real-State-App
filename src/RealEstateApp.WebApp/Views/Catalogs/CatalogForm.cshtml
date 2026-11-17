@@ -1,0 +1,8 @@
+@model CatalogPageViewModel
+@{ ViewData["Title"] = Model.Id.HasValue ? $"Editar {Model.Singular}" : $"Crear {Model.Singular}"; }
+<section class="page-intro"><div><p class="eyebrow">Catálogos / @Model.Title</p><h1>@ViewData["Title"]</h1><p class="lead-copy">Los nombres deben ser únicos dentro de este catálogo.</p></div></section>
+<form asp-action="@(Model.Id.HasValue ? "Edit" : "Create")" asp-route-kind="@Model.Kind" asp-route-id="@Model.Id" method="post" class="panel form-panel"><div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+    <div class="field"><label asp-for="Input.Name"></label><input asp-for="Input.Name" maxlength="100" required /><span asp-validation-for="Input.Name"></span></div>
+    <div class="field"><label asp-for="Input.Description"></label><textarea asp-for="Input.Description" rows="5" maxlength="2000" required></textarea><span asp-validation-for="Input.Description"></span></div>
+    <div class="form-actions"><a asp-action="Index" asp-route-kind="@Model.Kind" class="button button-secondary">Volver atrás</a><button type="submit" class="button">@(Model.Id.HasValue ? "Guardar cambios" : $"Crear {Model.Singular}")</button></div>
+</form>

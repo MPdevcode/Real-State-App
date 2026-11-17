@@ -1,0 +1,8 @@
+@model PropertyDetailsViewModel
+@{ ViewData["Title"] = $"Propiedad {Model.Property.Code}"; }
+<a asp-controller="Home" asp-action="Index" class="back-link">&larr; Explorar propiedades</a>
+<partial name="_PropertyDetails" model="Model.Property" />
+@if (User.Identity?.IsAuthenticated != true)
+{
+    <section class="join-strip"><div><h2>Imagine su vida aquí.</h2><p>Inicie sesión como cliente para conversar con el agente y enviar una oferta.</p></div><a class="button" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Client", new { id = Model.Property.Id })">Iniciar sesión</a></section>
+}

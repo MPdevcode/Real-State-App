@@ -1,0 +1,9 @@
+@model ConfirmationViewModel
+@{ ViewData["Title"] = Model.Title; }
+<section class="confirmation panel"><p class="eyebrow">Revise antes de continuar</p><h1>@Model.Title</h1><p class="lead-copy">@Model.Message</p>
+    @if (Model.Consequences is not null) { <div class="notice @(Model.Destructive ? "notice-error" : "")">@Model.Consequences</div> }
+    <form asp-controller="@Model.Controller" asp-action="@Model.PostAction" asp-route-id="@Model.Id" asp-route-role="@Model.Role" asp-route-kind="@Model.Kind" method="post"><div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+        @if (Model.Active.HasValue) { <input type="hidden" name="Active" value="@Model.Active.Value.ToString().ToLowerInvariant()" /> }
+        <div class="form-actions"><a asp-controller="@Model.Controller" asp-action="@Model.CancelAction" asp-route-role="@Model.Role" asp-route-kind="@Model.Kind" class="button button-secondary">Cancelar</a><button type="submit" class="button @(Model.Destructive ? "button-danger" : "")">Aceptar</button></div>
+    </form>
+</section>

@@ -1,0 +1,59 @@
+@model PropertyDetailsViewModel
+@{ ViewData["Title"] = $"Gestión de {Model.Property.Code}"; }
+<a asp-action="Index" class="back-link">&larr; Volver a mi portafolio</a>
+<partial name="_PropertyDetails" model="Model.Property" />
+<div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+@if (!Model.Property.Available) { <div class="notice" role="status">Esta propiedad fue vendida. Sus conversaciones y ofertas se conservan como historial de solo lectura.</div> }
+<div class="workspace-grid">
+    <section class="panel"><p class="eyebrow">Comunicación</p><h2>Conversaciones con clientes</h2>
+        @if (Model.Conversations.Count == 0) { <p class="muted">Aún no hay conversaciones sobre esta propiedad.</p> }
+        <ul class="conversation-list">@foreach (var conversation in Model.Conversations.OrderByDescending(x => x.Latest?.CreatedAt))
+        {
+            <li><a asp-action="Details" asp-route-id="@Model.Property.Id" asp-route-clientId="@conversation.ClientId" asp-fragment="hilo"><strong>@conversation.ClientName</strong><span class="message-preview">@conversation.Latest?.Body</span><small>@(conversation.Latest is null ? "Sin mensajes" : Presentation.Date(conversation.Latest.CreatedAt))</small></a></li>
+        }</ul>
+    </section>
+    <section class="panel"><p class="eyebrow">Oportunidades</p><h2>Ofertas por cliente</h2>
+        @if (Model.Offers.Count == 0) { <p class="muted">Aún no hay ofertas para esta propiedad.</p> }
+        else
+        {
+            <div class="table-scroll"><table><caption>Resumen por cliente</caption><thead><tr><th scope="col">Cliente</th><th scope="col">Cantidad</th><th scope="col">Última oferta</th><th scope="col">Estado</th></tr></thead><tbody>
+            @foreach (var group in Model.Offers.GroupBy(x => x.ClientId))
+            {
+                var latest = group.OrderByDescending(x => x.CreatedAt).ThenByDescending(x => x.Id).First();
+                <tr><td><a asp-action="Details" asp-route-id="@Model.Property.Id" asp-route-clientId="@group.Key" asp-fragment="historial">@latest.ClientName</a></td><td>@group.Count()</td><td>@Presentation.Money(latest.Amount)</td><td>@latest.StatusLabel</td></tr>
+            }
+            </tbody></table></div>
+        }
+    </section>
+</div>
+@if (Model.SelectedClientId is not null)
+{
+    <section class="panel section-space" id="hilo"><h2>Conversación seleccionada</h2>
+    @if (Model.SelectedConversation is { } selected)
+    {
+        <h3>@selected.ClientName</h3><partial name="_Conversation" model="selected" />
+        <form asp-action="Reply" asp-route-id="@Model.Property.Id" asp-route-clientId="@Model.SelectedClientId" method="post"><fieldset disabled="@(!Model.Property.Available)"><div class="field"><label asp-for="Message.Body"></label><textarea asp-for="Message.Body" rows="4" maxlength="4000" required></textarea><span asp-validation-for="Message.Body"></span></div><button type="submit" class="button">Enviar respuesta</button></fieldset></form>
+    }
+    else { <p class="muted">Este cliente no ha iniciado una conversación para esta propiedad.</p> }
+    </section>
+    var selectedOffers = Model.Offers.Where(x => x.ClientId == Model.SelectedClientId).ToList();
+    <section class="panel section-space" id="historial"><h2>Historial de ofertas del cliente</h2>
+        @if (selectedOffers.Count == 0) { <p class="muted">Este cliente no ha realizado ofertas.</p> }
+        else
+        {
+            <p>@selectedOffers[0].ClientName</p><p class="muted">Aceptar una oferta vende la propiedad y rechaza todas las demás ofertas pendientes.</p>
+            <div class="table-scroll"><table><caption>Ofertas de @selectedOffers[0].ClientName</caption><thead><tr><th scope="col">Fecha</th><th scope="col">Monto</th><th scope="col">Estado</th><th scope="col">Acciones</th></tr></thead><tbody>
+            @foreach (var offer in selectedOffers)
+            {
+                <tr><td>@Presentation.Date(offer.CreatedAt)</td><td>@Presentation.Money(offer.Amount)</td><td>@offer.StatusLabel</td><td>
+                @if (offer.Status == OfferStatus.Pending && Model.Property.Available)
+                {
+                    <form asp-action="Respond" asp-route-id="@Model.Property.Id" asp-route-clientId="@Model.SelectedClientId" method="post" class="inline-actions"><input type="hidden" name="OfferId" value="@offer.Id" /><button type="submit" class="button button-small" name="Accept" value="true">Aceptar</button><button type="submit" class="button button-secondary button-small" name="Accept" value="false">Rechazar</button></form>
+                }
+                else { <span class="muted">Solo lectura</span> }
+                </td></tr>
+            }
+            </tbody></table></div>
+        }
+    </section>
+}

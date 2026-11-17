@@ -1,0 +1,6 @@
+@model ErrorViewModel
+@{ ViewData["Title"] = Model.StatusCode == 403 ? "Acceso denegado" : "No se pudo completar la solicitud"; }
+<section class="error-page"><p class="eyebrow">RealEstate / @Model.StatusCode</p><h1>@(Model.StatusCode == 404 ? "Este espacio no está disponible." : Model.StatusCode == 403 ? "Acceso denegado." : "Hagamos una pausa.")</h1><p class="lead-copy">@Model.Message</p><a asp-controller="Home" asp-action="Start" class="button">Volver a mi inicio</a>
+    @if (Model.StatusCode == 401) { <a asp-controller="Account" asp-action="Login" class="button button-secondary">Iniciar sesión</a> }
+    @if (Model.RequestId is not null) { <p class="muted form-note">Referencia: @Model.RequestId</p> }
+</section>

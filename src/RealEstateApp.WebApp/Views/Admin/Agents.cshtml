@@ -1,0 +1,13 @@
+@model UserListingViewModel
+@{ ViewData["Title"] = "Listado de agentes"; }
+<section class="page-intro"><div><p class="eyebrow">Administración / Personas</p><h1>Listado de agentes</h1><p class="lead-copy">Gestione el acceso de sus agentes y sus propiedades asociadas.</p></div></section>
+@if (Model.Users.Count == 0) { <section class="empty-state"><h2>No hay agentes registrados.</h2><p>Los agentes aparecerán aquí cuando completen su registro.</p></section> }
+else
+{
+    <div class="panel table-scroll"><table><caption>Agentes activos e inactivos</caption><thead><tr><th scope="col">Nombre</th><th scope="col">Apellido</th><th scope="col">Correo electrónico</th><th scope="col">Propiedades</th><th scope="col">Estado</th><th scope="col">Acciones</th></tr></thead><tbody>
+    @foreach (var agent in Model.Users.OrderBy(x => x.FirstName).ThenBy(x => x.LastName))
+    {
+        <tr><td>@agent.FirstName</td><td>@agent.LastName</td><td>@agent.Email</td><td>@agent.PropertyCount</td><td><span class="status-pill @(agent.IsActive ? "" : "inactive")">@(agent.IsActive ? "Activo" : "Inactivo")</span></td><td><div class="inline-actions"><a asp-action="AgentStatus" asp-route-id="@agent.Id">@(agent.IsActive ? "Inactivar" : "Activar")</a><a asp-action="DeleteAgent" asp-route-id="@agent.Id" class="danger-link">Eliminar</a></div></td></tr>
+    }
+    </tbody></table></div>
+}

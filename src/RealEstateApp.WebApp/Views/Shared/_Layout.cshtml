@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#183c3a" />
+    <title>@ViewData["Title"] | RealEstate</title>
+    <link rel="icon" href="~/images/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+<a class="skip-link" href="#main">Saltar al contenido</a>
+<header class="site-header">
+    <div class="shell header-inner">
+        <a class="brand" asp-controller="Home" asp-action="Start"><img src="~/images/mark.svg" alt="" width="35" height="35" /><span>RealEstate<span class="brand-dot">.</span></span></a>
+        <nav class="main-nav" aria-label="Navegación principal">
+        @if (User.IsInRole(Roles.Client))
+        {
+            <a asp-controller="Client" asp-action="Index">Home</a>
+            <a asp-controller="Home" asp-action="Agents">Agentes</a>
+            <a asp-controller="Client" asp-action="Favorites">Mis propiedades</a>
+        }
+        else if (User.IsInRole(Roles.Agent))
+        {
+            <a asp-controller="Agent" asp-action="Index">Home del agente</a>
+            <a asp-controller="Agent" asp-action="Maintenance">Mantenimiento de propiedades</a>
+            <a asp-controller="Agent" asp-action="Profile">Mi perfil</a>
+        }
+        else if (User.IsInRole(Roles.Admin))
+        {
+            <a asp-controller="Admin" asp-action="Index">Home del administrador</a>
+            <a asp-controller="Admin" asp-action="Agents">Listado de los agentes</a>
+            <details class="nav-menu">
+                <summary>Mantenimientos</summary>
+                <div class="nav-popover">
+                    <a asp-controller="AdminUsers" asp-action="Index" asp-route-role="@Roles.Admin">Mantenimiento de administradores</a>
+                    <a asp-controller="AdminUsers" asp-action="Index" asp-route-role="@Roles.Developer">Mantenimiento de desarrolladores</a>
+                    <a asp-controller="Catalogs" asp-action="Index" asp-route-kind="@CatalogKind.PropertyTypes">Mantenimiento de tipo de propiedades</a>
+                    <a asp-controller="Catalogs" asp-action="Index" asp-route-kind="@CatalogKind.SaleTypes">Mantenimiento de tipo de ventas</a>
+                    <a asp-controller="Catalogs" asp-action="Index" asp-route-kind="@CatalogKind.Improvements">Mantenimiento de mejoras</a>
+                </div>
+            </details>
+        }
+        else
+        {
+            <a asp-controller="Home" asp-action="Index">Home</a>
+            <a asp-controller="Home" asp-action="Agents">Agentes</a>
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                <a asp-controller="Account" asp-action="Register">Únete a la app</a>
+                <a class="nav-login" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+            }
+        }
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <form asp-controller="Account" asp-action="Logout" method="post" class="nav-logout"><button type="submit" class="text-button">Cerrar sesión</button></form>
+        }
+        </nav>
+    </div>
+</header>
+<main id="main" class="shell main-content" tabindex="-1">
+    <partial name="_Alerts" />
+    @RenderBody()
+</main>
+<footer class="site-footer"><div class="shell footer-inner"><span class="brand">RealEstate.</span><span>Espacios para vivir. Personas para confiar.</span><span>República Dominicana &middot; @DateTime.UtcNow.Year</span></div></footer>
+<script src="~/js/site.js" asp-append-version="true" defer></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

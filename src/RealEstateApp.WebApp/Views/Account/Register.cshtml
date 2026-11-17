@@ -1,0 +1,20 @@
+@model RegisterInputViewModel
+@{ ViewData["Title"] = "Únete a la app"; }
+<section class="page-intro"><div><p class="eyebrow">Un nuevo comienzo</p><h1>Su espacio en RealEstate.</h1><p class="lead-copy">Regístrese como cliente o agente. Los clientes activan su cuenta por correo; los agentes necesitan la aprobación de un administrador.</p></div></section>
+<form asp-action="Register" method="post" enctype="multipart/form-data" class="panel form-panel">
+    <div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+    <h2>Información personal</h2><div class="form-grid">
+        <div class="field"><label asp-for="FirstName"></label><input asp-for="FirstName" autocomplete="given-name" required /><span asp-validation-for="FirstName"></span></div>
+        <div class="field"><label asp-for="LastName"></label><input asp-for="LastName" autocomplete="family-name" required /><span asp-validation-for="LastName"></span></div>
+        <div class="field"><label asp-for="Phone"></label><input asp-for="Phone" type="tel" autocomplete="tel" required /><span asp-validation-for="Phone"></span></div>
+        <div class="field"><label asp-for="Photo"></label><input asp-for="Photo" type="file" accept="image/jpeg,image/png" required data-image-preview="register-preview" /><span asp-validation-for="Photo"></span><small>JPG o PNG, hasta 5 MB. Si hay errores, seleccione la foto nuevamente.</small><img id="register-preview" class="upload-preview" alt="Vista previa de su foto" hidden /></div>
+    </div>
+    <h2>Datos de acceso</h2><div class="form-grid">
+        <div class="field"><label asp-for="UserName"></label><input asp-for="UserName" autocomplete="username" required /><span asp-validation-for="UserName"></span></div>
+        <div class="field"><label asp-for="Email"></label><input asp-for="Email" type="email" autocomplete="email" required /><span asp-validation-for="Email"></span></div>
+        <div class="field"><label asp-for="Password"></label><input asp-for="Password" autocomplete="new-password" required /><span asp-validation-for="Password"></span><small>Mínimo 8 caracteres. Incluya mayúsculas, minúsculas, números y un símbolo.</small></div>
+        <div class="field"><label asp-for="ConfirmPassword"></label><input asp-for="ConfirmPassword" autocomplete="new-password" required /><span asp-validation-for="ConfirmPassword"></span></div>
+        <div class="field"><label asp-for="Role"></label><select asp-for="Role" required><option value="@Roles.Client">Cliente</option><option value="@Roles.Agent">Agente</option></select><span asp-validation-for="Role"></span></div>
+    </div>
+    <div class="form-actions"><a asp-controller="Home" asp-action="Index" class="button button-secondary">Volver atrás</a><button type="submit" class="button">Registrarse</button></div>
+</form>

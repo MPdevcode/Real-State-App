@@ -1,0 +1,15 @@
+@model AgentSearchViewModel
+@{ ViewData["Title"] = "Nuestros agentes"; }
+<section class="page-intro"><div><p class="eyebrow">Personas / Confianza</p><h1>El primer paso es una buena conversación.</h1><p class="lead-copy">Conozca a nuestros agentes activos y descubra sus propiedades disponibles.</p></div></section>
+<form asp-action="Agents" method="get" class="panel search-form"><div asp-validation-summary="All" class="validation-summary" role="alert"></div><div class="field"><label asp-for="Name"></label><input asp-for="Name" placeholder="Busque por nombre o apellido" /><span asp-validation-for="Name"></span></div><button class="button" type="submit">Buscar</button><a asp-action="Agents">Limpiar búsqueda</a></form>
+@if (Model.Agents.Count == 0)
+{
+    <section class="empty-state"><h2>No encontramos coincidencias.</h2><p>No se encontraron agentes activos con el nombre ingresado.</p></section>
+}
+else
+{
+    <div class="agent-grid">@foreach (var agent in Model.Agents)
+    {
+        <a class="agent-card" asp-action="AgentProperties" asp-route-id="@agent.Id"><img src="@Presentation.Image(agent.Photo)" alt="Foto de @agent.FullName" loading="lazy" /><div><p class="eyebrow">Agente inmobiliario</p><h2>@agent.FullName</h2><span>Ver propiedades disponibles &rarr;</span></div></a>
+    }</div>
+}

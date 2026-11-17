@@ -1,0 +1,54 @@
+@model PropertyListingViewModel
+@{ ViewData["Title"] = Model.Title; }
+<section class="page-intro @(Model.ListingController == "Home" && Model.ListingAction == "Index" ? "hero-intro" : "")">
+    <div><p class="eyebrow">@(Model.ListingController == "Agent" ? "Su espacio de trabajo" : "Inmuebles / República Dominicana")</p><h1>@Model.Title</h1><p class="lead-copy">@Model.Subtitle</p></div>
+    @if (Model.Maintenance)
+    {
+        <a class="button" asp-controller="Agent" asp-action="Create">Crear propiedad</a>
+    }
+    else if (Model.ListingController == "Home" && Model.ListingAction == "Index")
+    {
+        <div class="hero-aside" aria-hidden="true"><div class="architectural-mark"></div><span>EL SIGUIENTE CAPÍTULO<br />EMPIEZA CON UN ESPACIO.</span></div>
+    }
+</section>
+<partial name="_PropertyFilters" model="Model" />
+<div class="section-heading"><h2>@(Model.Maintenance ? "Propiedades disponibles" : "Explore las propiedades")</h2><span class="muted">@Model.Properties.Count resultados &middot; Más recientes primero</span></div>
+@if (Model.Properties.Count == 0)
+{
+    <section class="empty-state"><span class="eyebrow">Un espacio por descubrir</span><h2>Aún no hay resultados.</h2><p>@Model.EmptyMessage</p><p class="muted">Pruebe otros filtros o vuelva más adelante.</p></section>
+}
+else
+{
+    <div class="property-grid">
+    @foreach (var property in Model.Properties)
+    {
+        var detailController = Model.ListingController == "Agent" ? "Agent" : User.IsInRole(Roles.Client) ? "Client" : "Home";
+        <article class="property-card">
+            <a asp-controller="@detailController" asp-action="Details" asp-route-id="@property.Id" class="property-image-link" aria-label="Ver @property.PropertyType código @property.Code">
+                <img src="@Presentation.Image(property.Images.OrderBy(x => x.SortOrder).FirstOrDefault()?.FileKey)" alt="@property.PropertyType, código @property.Code" loading="lazy" class="property-image" />
+                <span class="property-badge @(property.Available ? "" : "sold")">@(property.Available ? property.SaleType : "Vendida")</span>
+            </a>
+            <div class="property-card-body">
+                <div class="card-kicker"><span>@property.PropertyType</span><span>COD. @property.Code</span></div>
+                <h3><a asp-controller="@detailController" asp-action="Details" asp-route-id="@property.Id">@Presentation.Money(property.Price)</a></h3>
+                <p class="muted">@property.SaleType &middot; @(property.Available ? "Disponible" : "Vendida")</p>
+                <div class="property-facts"><span><b>@property.Bedrooms</b> hab.</span><span><b>@property.Bathrooms</b> baños</span><span><b>@property.Size.ToString("N0")</b> m&sup2;</span></div>
+                <div class="card-actions">
+                    <a asp-controller="@detailController" asp-action="Details" asp-route-id="@property.Id">Ver propiedad <span aria-hidden="true">&rarr;</span></a>
+                    @if (User.IsInRole(Roles.Client))
+                    {
+                        <form asp-controller="Client" asp-action="SetFavorite" method="post">
+                            <input type="hidden" name="PropertyId" value="@property.Id" /><input type="hidden" name="Favorite" value="@((!property.IsFavorite).ToString().ToLowerInvariant())" /><input type="hidden" name="ReturnUrl" value="@(Context.Request.PathBase + Context.Request.Path + Context.Request.QueryString)" />
+                            <button type="submit" class="text-button favorite-button" aria-pressed="@property.IsFavorite.ToString().ToLowerInvariant()">@(property.IsFavorite ? "Quitar favorita" : "Guardar favorita")</button>
+                        </form>
+                    }
+                </div>
+                @if (Model.Maintenance)
+                {
+                    <div class="card-maintenance"><a asp-controller="Agent" asp-action="Edit" asp-route-id="@property.Id">Editar</a><a asp-controller="Agent" asp-action="Delete" asp-route-id="@property.Id" class="danger-link">Eliminar</a></div>
+                }
+            </div>
+        </article>
+    }
+    </div>
+}

@@ -1,0 +1,8 @@
+@model ProfileInputViewModel
+@{ ViewData["Title"] = "Mi perfil"; }
+<section class="page-intro"><div><p class="eyebrow">Su identidad profesional</p><h1>Mi perfil</h1><p class="lead-copy">Mantenga sus datos de contacto actualizados para que sus clientes puedan encontrarle.</p></div></section>
+<form asp-action="Profile" method="post" enctype="multipart/form-data" class="panel form-panel"><div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+    <img src="@Presentation.Image(Model.CurrentPhoto)" alt="Foto actual de perfil" class="avatar" />
+    <div class="form-grid"><div class="field"><label asp-for="FirstName"></label><input asp-for="FirstName" autocomplete="given-name" required /><span asp-validation-for="FirstName"></span></div><div class="field"><label asp-for="LastName"></label><input asp-for="LastName" autocomplete="family-name" required /><span asp-validation-for="LastName"></span></div><div class="field"><label asp-for="Phone"></label><input asp-for="Phone" type="tel" autocomplete="tel" required /><span asp-validation-for="Phone"></span></div><div class="field"><label asp-for="Photo"></label><input asp-for="Photo" type="file" accept="image/jpeg,image/png" data-image-preview="profile-preview" /><span asp-validation-for="Photo"></span><small>JPG o PNG, hasta 5 MB. Si no selecciona una foto, se conservará la actual.</small><img id="profile-preview" class="upload-preview" alt="Vista previa de la nueva foto" hidden /></div></div>
+    <div class="form-actions"><a asp-action="Index" class="button button-secondary">Volver atrás</a><button type="submit" class="button">Guardar cambios</button></div>
+</form>

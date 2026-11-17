@@ -1,0 +1,19 @@
+@model PropertyListingViewModel
+@{ var listingUrl = Url.Action(Model.ListingAction, Model.ListingController, new { id = Model.AgentId }); }
+<div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+<form method="get" action="@listingUrl" class="filter-panel" aria-label="Buscar propiedad por código">
+    <div class="filter-grid">
+        <div class="field"><label asp-for="Filter.Code"></label><input asp-for="Filter.Code" placeholder="6 dígitos" inputmode="numeric" maxlength="6" /></div>
+    </div>
+    <div class="filter-actions"><button type="submit" class="button">Buscar</button></div>
+</form>
+<form method="get" action="@listingUrl" class="filter-panel" aria-label="Filtrar propiedades">
+    <div class="filter-grid">
+        <div class="field"><label asp-for="Filter.PropertyTypeId"></label><select asp-for="Filter.PropertyTypeId" asp-items="@(new SelectList(Model.PropertyTypes, "Id", "Name"))"><option value="">Todos los tipos</option></select></div>
+        <div class="field"><label asp-for="Filter.MinPrice"></label><input asp-for="Filter.MinPrice" type="number" min="0" step="0.01" placeholder="Sin mínimo" /></div>
+        <div class="field"><label asp-for="Filter.MaxPrice"></label><input asp-for="Filter.MaxPrice" type="number" min="0" step="0.01" placeholder="Sin máximo" /></div>
+        <div class="field"><label asp-for="Filter.Bedrooms"></label><input asp-for="Filter.Bedrooms" type="number" min="0" placeholder="Todas" /></div>
+        <div class="field"><label asp-for="Filter.Bathrooms"></label><input asp-for="Filter.Bathrooms" type="number" min="0" placeholder="Todos" /></div>
+    </div>
+    <div class="filter-actions"><button type="submit" class="button">Filtrar</button><a href="@listingUrl" class="quiet-link">Limpiar filtros</a><span class="muted">Todos los precios en pesos dominicanos (DOP).</span></div>
+</form>

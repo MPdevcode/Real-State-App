@@ -1,0 +1,33 @@
+@model PropertyInputViewModel
+@{ var editing = Model.Id.HasValue; ViewData["Title"] = editing ? "Editar propiedad" : "Crear propiedad"; }
+<section class="page-intro"><div><p class="eyebrow">Su portafolio</p><h1>@ViewData["Title"]</h1><p class="lead-copy">@(editing ? $"Código {Model.Code}. El código y el propietario no se pueden modificar." : "El código único y el agente se asignan automáticamente al crear la propiedad.")</p></div></section>
+@if (Model.PropertyTypes.Count == 0) { <div class="notice notice-error">No existen tipos de propiedades registrados. Debe crear al menos un tipo de propiedad antes de registrar una propiedad.</div> }
+@if (Model.SaleTypes.Count == 0) { <div class="notice notice-error">No existen tipos de ventas registrados. Debe crear al menos un tipo de venta antes de registrar una propiedad.</div> }
+@if (Model.Improvements.Count == 0) { <div class="notice notice-error">No existen mejoras registradas. Debe crear al menos una mejora antes de registrar una propiedad.</div> }
+<form asp-action="@(editing ? "Edit" : "Create")" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="panel form-panel">
+    <div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+    <div class="form-grid">
+        <div class="field"><label asp-for="PropertyTypeId"></label><select asp-for="PropertyTypeId" asp-items="@(new SelectList(Model.PropertyTypes, "Id", "Name"))" required><option value="">Seleccione un tipo</option></select><span asp-validation-for="PropertyTypeId"></span></div>
+        <div class="field"><label asp-for="SaleTypeId"></label><select asp-for="SaleTypeId" asp-items="@(new SelectList(Model.SaleTypes, "Id", "Name"))" required><option value="">Seleccione un tipo</option></select><span asp-validation-for="SaleTypeId"></span></div>
+        <div class="field"><label asp-for="Price"></label><input asp-for="Price" type="number" step="0.01" min="0.01" required /><span asp-validation-for="Price"></span></div>
+        <div class="field"><label asp-for="Size"></label><input asp-for="Size" type="number" step="0.01" min="0.01" required /><span asp-validation-for="Size"></span></div>
+        <div class="field"><label asp-for="Bedrooms"></label><input asp-for="Bedrooms" type="number" min="0" required /><span asp-validation-for="Bedrooms"></span></div>
+        <div class="field"><label asp-for="Bathrooms"></label><input asp-for="Bathrooms" type="number" min="0" required /><span asp-validation-for="Bathrooms"></span></div>
+    </div>
+    <div class="field"><label asp-for="Description"></label><textarea asp-for="Description" rows="6" maxlength="4000" required></textarea><span asp-validation-for="Description"></span></div>
+    <fieldset><legend>Mejoras</legend><p class="muted">Seleccione al menos una.</p><div class="checkbox-grid">@foreach (var improvement in Model.Improvements)
+    {
+        <label class="check-label"><input type="checkbox" name="ImprovementIds" value="@improvement.Id" checked="@Model.ImprovementIds.Contains(improvement.Id)" />@improvement.Name</label>
+    }</div><span asp-validation-for="ImprovementIds"></span></fieldset>
+    @if (editing)
+    {
+        <fieldset class="section-space"><legend>Imágenes actuales</legend><p class="muted">Desmarque las imágenes que desea eliminar. Las seleccionadas se conservarán.</p><div class="existing-images">@foreach (var image in Model.ExistingImages.OrderBy(x => x.SortOrder))
+        {
+            <label><img src="@Presentation.Image(image.FileKey)" alt="Imagen actual @(image.SortOrder + 1)" /><span class="check-label"><input type="checkbox" name="RetainedImageIds" value="@image.Id" checked="@Model.RetainedImageIds.Contains(image.Id)" />Conservar imagen</span></label>
+        }</div></fieldset>
+    }
+    <fieldset class="section-space"><legend>@(editing ? "Agregar imágenes" : "Imágenes de la propiedad")</legend><p class="muted">Entre 1 y 4 imágenes en total, incluidas las conservadas. JPG o PNG, hasta 5 MB por imagen. Si hay errores, seleccione los archivos nuevos nuevamente.</p>
+        <div class="form-grid"><div class="field"><label asp-for="File1"></label><input asp-for="File1" type="file" accept="image/jpeg,image/png" data-image-preview="preview1" /><span asp-validation-for="File1"></span><img id="preview1" class="upload-preview" alt="Vista previa de imagen 1" hidden /></div><div class="field"><label asp-for="File2"></label><input asp-for="File2" type="file" accept="image/jpeg,image/png" data-image-preview="preview2" /><span asp-validation-for="File2"></span><img id="preview2" class="upload-preview" alt="Vista previa de imagen 2" hidden /></div><div class="field"><label asp-for="File3"></label><input asp-for="File3" type="file" accept="image/jpeg,image/png" data-image-preview="preview3" /><span asp-validation-for="File3"></span><img id="preview3" class="upload-preview" alt="Vista previa de imagen 3" hidden /></div><div class="field"><label asp-for="File4"></label><input asp-for="File4" type="file" accept="image/jpeg,image/png" data-image-preview="preview4" /><span asp-validation-for="File4"></span><img id="preview4" class="upload-preview" alt="Vista previa de imagen 4" hidden /></div></div>
+    </fieldset>
+    <div class="form-actions"><a asp-action="Maintenance" class="button button-secondary">Volver atrás</a><button type="submit" class="button" disabled="@(!Model.HasCatalogs)">@(editing ? "Guardar propiedad" : "Crear propiedad")</button></div>
+</form>

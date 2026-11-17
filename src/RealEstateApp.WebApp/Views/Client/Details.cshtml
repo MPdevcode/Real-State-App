@@ -1,0 +1,29 @@
+@model PropertyDetailsViewModel
+@{ ViewData["Title"] = $"Propiedad {Model.Property.Code}"; }
+<a asp-action="Index" class="back-link">&larr; Volver a propiedades</a>
+<partial name="_PropertyDetails" model="Model.Property" />
+<div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+<div class="workspace-grid">
+    <section class="panel" id="conversacion"><p class="eyebrow">Contacto directo</p><h2>Converse con el agente</h2>
+        @foreach (var conversation in Model.Conversations) { <partial name="_Conversation" model="conversation" /> }
+        @if (Model.Conversations.Count == 0) { <p class="muted">Pregunte por este espacio. Solo usted y el agente verán esta conversación.</p> }
+        <form asp-action="SendMessage" asp-route-id="@Model.Property.Id" method="post"><fieldset disabled="@(!Model.Property.Available)"><div class="field"><label asp-for="Message.Body"></label><textarea asp-for="Message.Body" rows="4" maxlength="4000" required></textarea><span asp-validation-for="Message.Body"></span></div><button type="submit" class="button">Enviar mensaje</button></fieldset></form>
+        @if (!Model.Property.Available) { <p class="muted">La propiedad ya no está disponible para recibir mensajes.</p> }
+    </section>
+    <section class="panel" id="ofertas"><p class="eyebrow">El siguiente paso</p><h2>Sus ofertas</h2>
+        <div class="offer-toolbar"><button type="button" class="button" data-open-dialog="offer-dialog" disabled="@(!Model.CanOffer)">Enviar nueva oferta</button></div>
+        @if (Model.OfferBlockedReason is { } blockedReason) { <p class="notice">@blockedReason</p> }
+        <dialog id="offer-dialog" class="modal-dialog" aria-labelledby="offer-dialog-title" data-open-on-load="@(ViewData.ModelState.ContainsKey("Offer.Amount") && Model.CanOffer ? "true" : null)">
+            <form asp-action="SendOffer" asp-route-id="@Model.Property.Id" method="post" class="offer-form"><h3 id="offer-dialog-title">Enviar nueva oferta</h3>
+                <div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+                <div class="field"><label asp-for="Offer.Amount"></label><input asp-for="Offer.Amount" type="number" min="0.01" step="0.01" required /><span asp-validation-for="Offer.Amount"></span></div>
+                <div class="form-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button">Enviar oferta</button></div>
+            </form>
+        </dialog>
+        @if (Model.Offers.Count == 0) { <p class="muted">Aún no ha realizado ofertas sobre esta propiedad.</p> }
+        else
+        {
+            <div class="table-scroll"><table><caption>Historial de sus ofertas</caption><thead><tr><th scope="col">Fecha</th><th scope="col">Monto</th><th scope="col">Estado</th></tr></thead><tbody>@foreach (var offer in Model.Offers) { <tr><td>@Presentation.Date(offer.CreatedAt)</td><td>@Presentation.Money(offer.Amount)</td><td><span class="status-pill">@offer.StatusLabel</span></td></tr> }</tbody></table></div>
+        }
+    </section>
+</div>

@@ -1,0 +1,13 @@
+@model CatalogPageViewModel
+@{ ViewData["Title"] = Model.Title; }
+<section class="page-intro"><div><p class="eyebrow">Administración / Catálogos</p><h1>@Model.Title</h1><p class="lead-copy">Organice la información que sus agentes utilizan al publicar propiedades.</p></div><a asp-action="Create" asp-route-kind="@Model.Kind" class="button">Crear @Model.Singular</a></section>
+@if (Model.Items.Count == 0) { <section class="empty-state"><h2>@Model.EmptyText</h2></section> }
+else
+{
+    <div class="panel table-scroll"><table><caption>@Model.Title registrados</caption><thead><tr><th scope="col">Nombre</th><th scope="col">Descripción</th><th scope="col">Propiedades asociadas</th><th scope="col">Acciones</th></tr></thead><tbody>
+    @foreach (var item in Model.Items.OrderBy(x => x.Name))
+    {
+        <tr><td><strong>@item.Name</strong></td><td>@item.Description</td><td>@item.PropertyCount</td><td><div class="inline-actions"><a asp-action="Edit" asp-route-kind="@Model.Kind" asp-route-id="@item.Id">Editar</a><a asp-action="Delete" asp-route-kind="@Model.Kind" asp-route-id="@item.Id" class="danger-link">Eliminar</a></div></td></tr>
+    }
+    </tbody></table></div>
+}
